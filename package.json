@@ -8,5 +8,9 @@
     "start": "node server.js"
   },
   "author": "Payton Mock, Danny Millard",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "path": "^0.12.7"
+  }
 }
