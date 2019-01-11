@@ -20,28 +20,27 @@ module.exports = function (app) {
 
             // Check is account already exists
             account.find({
-                    email: newAccount.email
-                })
-                .then(docs => {
-                    if (docs.length) {
-                        res.status(400).json("Account already associated to " + newAccount.email);
-                    } else {
-                        account.find({
-                                userName: newAccount.userName
-                            })
-                            .then(docs => {
-                                if (docs.length) {
-                                    res.status(400).json("User name is taken");
-                                } else {
-                                    newAccount.save();
-                                    res.status(201).json("Account Created");
-                                }
-                            })
-                            .catch(err => console.error(err));
-                    }
-
-                })
-                .catch(err => console.error(err));
+                email: newAccount.email
+            }, function (err, documents) {
+                if (err) console.error(err);
+                if (documents.length) {
+                    console.log("Account Exists");
+                    res.status(400).json("There is an account already associated with " + req.body.email);
+                } else {
+                    account.find({
+                        userName: newAccount.userName
+                    }, function (err, documents) {
+                        if (err) console.error(err);
+                        if (documents.length) {
+                            res.status(400).json("User name is taken");
+                        } else {
+                            console.log("Creating New Account");
+                            newAccount.save();
+                            res.status(201).json("Account Created");
+                        }
+                    });
+                }
+            });
         }
     });
 
@@ -58,23 +57,23 @@ module.exports = function (app) {
         console.log("password:" + password);
 
         account.find({
-                userName: userName,
-                password: password
-            })
-            .then(docs => {
-                if (docs.length) {
-                    console.log("User Exists");
-                    res.status(200).json({
-                        email: docs[0].email,
-                        userName: docs[0].userName
-                    });
-                } else {
-                    console.log("User does not exist");
-                    res.status(400).json("The username and password combination did not match our records.")
-                }
+            userName: userName,
+            password: password
+        }, function (err, documents) {
+            if (err) console.error(err);
+            if (documents.length > 0) {
+                console.log("User Exists");
 
-            })
-            .catch(err => console.error(err));
+                res.status(200).json({
+                    email: documents[0].email,
+                    userName: documents[0].userName
+                });
+
+            } else {
+                console.log("User does not exist");
+                res.status(400).json("The username and password combination did not match our records.")
+            }
+        });
     });
 
 };
