@@ -1,17 +1,15 @@
 {
-  "name": "table-tool-server",
-  "version": "0.0.1",
+  "name": "Table-Tool-Server",
+  "version": "1.0.0",
   "description": "A server to host the table tool application",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "author": "Payton Mock, Danny Millard",
-  "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "mongodb": "^3.1.10",
-    "path": "^0.12.7"
+    "mongoose": "^5.4.3"
   }
 }

@@ -1,37 +1,32 @@
 var express = require('express');
-var path = require('path');
-var MongoClient = require('mongodb').MongoClient;
-
-var url = "mongodb://localhost:8080/mydb";
-
-MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    console.log("Database created!");
-    db.close();
-  });
-
+var bodyParser = require('body-parser');
 var app = express();
+var routes = require('./routes/routes');
+var mongoCredentials = require('./mongocredentials');
+var mongoURL = mongoCredentials.url;
+var mongoose = require("mongoose");
+var db = mongoose.connection;
 
-var serverIP = '192.168.1.26';
-
-app.use('/', express.static(__dirname + '/build/'));
-
-//re-route to index.html on any unhandled request
-app.get('/*', function(req, res){
-    res.sendFile(path.join(__dirname + '/build/index.html'));
+mongoose.connect(mongoURL);
+//Called when there is an error connecting to mongoDB
+db.on('error', console.error.bind(console, 'connection error:'));
+//Called when successfully connected to MongoDB
+db.once('open', function callback() {
+  console.log('DB connection opened');
 });
 
-server = app.listen(8080, serverIP, function(err) {
-    if (err) {
-        print('ERROR');
-        print(err);
-    }
-    else {
-        print(`now serving ${serverIP}:8080`);
-    }
-});
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
+//points to directory that holds views and controllers
+app.use(express.static(__dirname + '/public'));
 
-//helper method 
-function print(string) {
-    console.log(string);
-}
+
+//Points incomming request to routes files(Where API's Live)
+routes(app);
+
+
+app.listen(3001, function () {
+  console.log('Listening on port 3001!');
+});
