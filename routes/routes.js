@@ -13,7 +13,7 @@ module.exports = function (app) {
                 email: req.body.email
             });
 
-        //make sure all required feilds are present
+        //make sure all required fields are present
         if (!newAccount.userName || !newAccount.password || !newAccount.email) {
             res.status("500").json("UserName,Password and Email are REQUIRED!!!");
         } else {

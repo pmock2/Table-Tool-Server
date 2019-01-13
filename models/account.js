@@ -7,7 +7,7 @@ var accountSchema = new Schema({
     email: String
 }, {
     collection: "account"
-})
+});
 var account = mongoose.model("Account", accountSchema);
 
 
@@ -17,4 +17,4 @@ var account = mongoose.model("Account", accountSchema);
 
 module.exports = {
     account: account
-}
+};

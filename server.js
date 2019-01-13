@@ -6,6 +6,9 @@ var mongoCredentials = require('./mongocredentials');
 var mongoURL = mongoCredentials.url;
 var mongoose = require("mongoose");
 var db = mongoose.connection;
+var cors = require('cors')
+
+var IP = 'localhost';
 
 mongoose.connect(mongoURL);
 //Called when there is an error connecting to mongoDB
@@ -19,6 +22,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
+
+app.use(cors());
 //points to directory that holds views and controllers
 app.use(express.static(__dirname + '/public'));
 
@@ -27,6 +32,6 @@ app.use(express.static(__dirname + '/public'));
 routes(app);
 
 
-app.listen(3001, function () {
-  console.log('Listening on port 3001!');
+app.listen(3001, IP, function () {
+  console.log(`Listening on ${IP}:3001!`);
 });
