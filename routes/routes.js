@@ -49,31 +49,36 @@ module.exports = function (app) {
      */
     app.get('/login', function (req, res) {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        var account = mongooseModel.account,
-            userName = req.query['userName'].toLowerCase(),
-            password = req.query['password'];
+        var userName = req.query.userName.toLowerCase(),
+            password = req.query.password;
 
-        console.log("userName: " + userName);
-        console.log("password:" + password);
+        User.findByCredentials(userName, password).then((user) => {
+            console.log(`logging in userName`);
+            return user.generateAuthToken().then((token) => {
+                user.addToken('rancher_auth', parsedToken[0]);
 
-        account.find({
-            userName: userName,
-            password: password
-        }, function (err, documents) {
-            if (err) console.error(err);
-            if (documents.length > 0) {
-                console.log("User Exists");
-
-                res.status(200).json({
-                    email: documents[0].email,
-                    userName: documents[0].userName
-                });
-
-            } else {
-                console.log("User does not exist");
-                res.status(400).json("The username and password combination did not match our records.")
-            }
+                res.cookie('auth', token);
+                res.status(200).send('Logged in');
+                // res.status(200).send('Login Successful');
+            });
+        }).catch((err) => {
+            res.status(400).send('User not found');
         });
     });
 
+    app.get('/user', (req, res) => {
+        var myCookie = req.headers.cookie;
+        var regex = /=(.*)/;
+        var match = regex.exec(myCookie);
+        if (match !== null) {
+            var token = match[1];
+            User.findByToken(token).then((user) => {
+                if (!user) {
+                    res.status(401).send('User not found!');
+                } else {
+                    res.status(200).send(user);
+                }
+            });
+        }
+    });
 };

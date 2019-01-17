@@ -6,7 +6,8 @@ var mongoCredentials = require('./mongocredentials');
 var mongoURL = mongoCredentials.url;
 var mongoose = require("mongoose");
 var db = mongoose.connection;
-var cors = require('cors')
+var cors = require('cors');
+var cookieParser = require('cookie-parser');
 
 var IP = 'localhost';
 
@@ -23,7 +24,16 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: true,
+  preflightContinue: true,
+  allowedHeaders: 'Content-Type,X-Requested-With,accept',
+  methods: "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS"
+}));
+
+app.use(cookieParser());
+app.use(bodyParser.json());
 //points to directory that holds views and controllers
 app.use(express.static(__dirname + '/public'));
 
