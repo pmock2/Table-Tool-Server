@@ -1,6 +1,7 @@
 module.exports = function (app) {
     var {Account} = require("../models/account");
     var {Group} = require("../models/group");
+    var {Campaign} = require("../models/group");
     /**
      * Register a new User
      */
@@ -122,6 +123,32 @@ module.exports = function (app) {
                 };
                 var group = Group,
                 newGroup = new group(groupObject).save();
+                console.log('created group');
+                res.status(200).send('Group Created!');
+            });
+        }
+        else {
+            res.status(401).send('No cookie :(');
+        }
+    });
+
+    app.post('/createcampaign', (req, res) => {
+        var myCookie = req.headers.cookie;
+        var regex = /=(.*)/;
+        var match = regex.exec(myCookie);
+        if (match !== null) {
+            var token = match[1];
+            Account.findByToken(token).then((user) => {
+                var campaignObject = {
+                    name : req.body.name,
+                    owner : user.id,
+                    id : 0,
+                    users : [user.id],
+                    dm : user.id,
+                    players : []
+                };
+                var campaign = Campaign,
+                newCampaign = new campaign(campaignObject).save();
                 console.log('created group');
                 res.status(200).send('Group Created!');
             });
