@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+var autoIncrement = require('mongoose-auto-increment');
 
 var accountSchema = new Schema({
     userName: String,
@@ -16,7 +17,7 @@ var accountSchema = new Schema({
         type: String,
         required: true
       }
-      }]
+      }],
 }, {
     collection: "account"
 });
@@ -55,13 +56,23 @@ accountSchema.methods.addToken = function (access, token) {
 
 accountSchema.methods.removeToken = function (token) {
     var account = this;
-    return account.update({
-        $pull: {
-            tokens: {
-                token
-            }
+    var tokens = account.tokens;
+    var index = tokens.indexOf(token);
+    tokens.splice(index, 1);
+    return account.save();
+};
+
+accountSchema.methods.findTokenByAccess = function (access) {
+    var account = this;
+    var tokens = account.tokens;
+    var token;
+
+    tokens.forEach(function(element) {
+        if (element.access === access) {
+            token = element;
         }
-    });
+      });
+    return token;
 };
 
 accountSchema.statics.findByToken = function (token) {
@@ -107,8 +118,12 @@ accountSchema.statics.findByCredentials = function (userName, password) {
 
 accountSchema.pre('save', function (next) {
     var account = this;
+
     if (account.isModified('password')) {
         bcrypt.genSalt(10, (err, salt) => {
+            if (err) {
+
+            }
             bcrypt.hash(account.password, salt, (err, hash) => {
                 account.password = hash;
                 next();
@@ -118,6 +133,7 @@ accountSchema.pre('save', function (next) {
         next();
     }
 });
+
 var Account = mongoose.model("Account", accountSchema);
 
 module.exports = {Account};

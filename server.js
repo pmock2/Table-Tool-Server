@@ -12,6 +12,7 @@ var cookieParser = require('cookie-parser');
 var IP = 'localhost';
 
 mongoose.connect(mongoURL);
+
 //Called when there is an error connecting to mongoDB
 db.on('error', console.error.bind(console, 'connection error:'));
 //Called when successfully connected to MongoDB
