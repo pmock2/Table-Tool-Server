@@ -1,6 +1,5 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-var autoIncrement = require('mongoose-auto-increment');
 
 var groupScheme = new Schema({
     name: String, //group name
@@ -19,7 +18,7 @@ groupScheme.methods.toJSON = function () {
 groupScheme.methods.addUser = function (userId) {
     var group = this;
     group.user = group.tokens.concat([userId]);
-    return account.save();
+    return group.save();
 };
 
 var Group = mongoose.model("Group", groupScheme);
