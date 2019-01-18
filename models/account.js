@@ -6,11 +6,20 @@ const bcrypt = require('bcryptjs');
 var accountSchema = new Schema({
     userName: String,
     password: String,
-    email: String
+    email: String,
+    tokens: [{
+        access: {
+          type: String,
+          required: true
+        },
+      token: {
+        type: String,
+        required: true
+      }
+      }]
 }, {
     collection: "account"
 });
-var account = mongoose.model("Account", accountSchema);
 
 accountSchema.methods.toJSON = function () {
     var account = this;
@@ -72,10 +81,10 @@ accountSchema.statics.findByToken = function (token) {
     });
 };
 
-accountSchema.statics.findByCredentials = function (username, password) {
+accountSchema.statics.findByCredentials = function (userName, password) {
     var account = this;
     return account.findOne({
-        username
+        userName
     }).then((foundAccount) => {
         if (!foundAccount) {
             console.log('no user so reject');
@@ -109,7 +118,6 @@ accountSchema.pre('save', function (next) {
         next();
     }
 });
+var Account = mongoose.model("Account", accountSchema);
 
-module.exports = {
-    account: account
-};
+module.exports = {Account};

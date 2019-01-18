@@ -1,12 +1,11 @@
 module.exports = function (app) {
-    var mongooseModel = require("../models/account.js");
-
+    var {Account} = require("../models/account");
     /**
      * Register a new User
      */
     app.post('/account/register', function (req, res) {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        var account = mongooseModel.account,
+        var account = Account,
             newAccount = new account({
                 userName: req.body.userName.toLowerCase(),
                 password: req.body.password,
@@ -48,21 +47,20 @@ module.exports = function (app) {
      * Login/Check Credentials
      */
     app.get('/login', function (req, res) {
-        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
         var userName = req.query.userName.toLowerCase(),
             password = req.query.password;
 
-        User.findByCredentials(userName, password).then((user) => {
-            console.log(`logging in userName`);
+        Account.findByCredentials(userName, password).then((user) => {
+            console.log(`logging in ${userName}`);
             return user.generateAuthToken().then((token) => {
-                user.addToken('rancher_auth', parsedToken[0]);
-
                 res.cookie('auth', token);
                 res.status(200).send('Logged in');
                 // res.status(200).send('Login Successful');
             });
         }).catch((err) => {
-            res.status(400).send('User not found');
+            console.log(`User not found ${err}`);
+            res.status(400).send(`User not found ${err}`);
         });
     });
 
@@ -72,7 +70,7 @@ module.exports = function (app) {
         var match = regex.exec(myCookie);
         if (match !== null) {
             var token = match[1];
-            User.findByToken(token).then((user) => {
+            Account.findByToken(token).then((user) => {
                 if (!user) {
                     res.status(401).send('User not found!');
                 } else {

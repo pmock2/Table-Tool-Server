@@ -22,6 +22,10 @@ db.once('open', function callback() {
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+app.use(bodyParser.json());
+
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(cors({
@@ -31,9 +35,6 @@ app.use(cors({
   allowedHeaders: 'Content-Type,X-Requested-With,accept',
   methods: "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS"
 }));
-
-app.use(cookieParser());
-app.use(bodyParser.json());
 //points to directory that holds views and controllers
 app.use(express.static(__dirname + '/public'));
 
