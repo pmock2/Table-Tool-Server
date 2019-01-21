@@ -1,7 +1,7 @@
 module.exports = function (app) {
-    var {Account} = require("../models/account");
-    var {Group} = require("../models/group");
-    var {Campaign} = require("../models/group");
+    var { Account } = require("../models/account");
+    var { Group } = require("../models/group");
+    var { Campaign } = require("../models/campaign");
     /**
      * Register a new User
      */
@@ -116,13 +116,13 @@ module.exports = function (app) {
             var token = match[1];
             Account.findByToken(token).then((user) => {
                 var groupObject = {
-                    name : req.body.name,
-                    owner : user.id,
-                    id : 0,
-                    users : [user.id]
+                    name: req.body.name,
+                    owner: user.id,
+                    id: 0,
+                    users: [user.id]
                 };
                 var group = Group,
-                newGroup = new group(groupObject).save();
+                    newGroup = new group(groupObject).save();
                 console.log('created group');
                 res.status(200).send('Group Created!');
             });
@@ -140,17 +140,61 @@ module.exports = function (app) {
             var token = match[1];
             Account.findByToken(token).then((user) => {
                 var campaignObject = {
-                    name : req.body.name,
-                    owner : user.id,
-                    id : 0,
-                    users : [user.id],
-                    dm : user.id,
-                    players : []
+                    name: req.body.name,
+                    owner: user.id,
+                    users: [user.userName],
+                    DM: user._id,
+                    players: []
                 };
-                var campaign = Campaign,
-                newCampaign = new campaign(campaignObject).save();
+                new Campaign(campaignObject).save();
                 console.log('created group');
-                res.status(200).send('Group Created!');
+                res.status(200).send('Campaign Created!');
+            }).catch((err) => {
+                res.status(401).send(`${err}`);
+            });
+        }
+        else {
+            res.status(401).send('No cookie :(');
+        }
+    });
+
+    app.get('/getcampaigns', (req, res) => {
+        var myCookie = req.headers.cookie;
+        var regex = /=(.*)/;
+        var match = regex.exec(myCookie);
+        if (match !== null) {
+            var token = match[1];
+            Account.findByToken(token).then((user) => {
+                Campaign.getCampaignsByUserName(user.userName).then((campaigns) => {
+                    res.status(200).send(campaigns);
+                }).catch((err) => {
+                    res.status(400).send(`${err}`);
+                });
+            }).catch((err) => {
+                res.status(400).send(`${err}`);
+            });
+        }
+        else {
+            res.status(401).send('No cookie :(');
+        }
+    });
+
+
+    app.get('/getownedcampaigns', (req, res) => {
+        var myCookie = req.headers.cookie;
+        var regex = /=(.*)/;
+        var match = regex.exec(myCookie);
+        if (match !== null) {
+            var token = match[1];
+            Account.findByToken(token).then((user) => {
+                var id = user.id;
+                Campaign.getCampaignsByOwnerId(id).then((campaigns) => {
+                    res.status(200).send(campaigns);
+                }).catch((err) => {
+                    res.status(400).send(`${err}`);
+                });
+            }).catch((err) => {
+                res.status(400).send(`${err}`);
             });
         }
         else {

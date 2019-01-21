@@ -75,6 +75,20 @@ accountSchema.methods.findTokenByAccess = function (access) {
     return token;
 };
 
+accountSchema.statics.findById = function (id) {
+    var account = this;
+    return account.findOne({
+        id
+    }).then((foundAccount) => {
+        if (!foundAccount) {
+            return Promise.reject();
+        }
+        else {
+            return foundAccount;
+        }
+    });
+};
+
 accountSchema.statics.findByToken = function (token) {
     var account = this;
     var decoded;
