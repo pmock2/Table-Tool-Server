@@ -41,8 +41,8 @@ app.use(express.static(__dirname + '/public'));
 
 
 //Points incomming request to routes files(Where API's Live)
-routes(app);
-
+// routes(app);
+app.use("/", routes);
 
 app.listen(3001, IP, function () {
   console.log(`Listening on ${IP}:3001!`);

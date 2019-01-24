@@ -10,14 +10,14 @@ var accountSchema = new Schema({
     email: String,
     tokens: [{
         access: {
-          type: String,
-          required: true
+            type: String,
+            required: true
         },
-      token: {
-        type: String,
-        required: true
-      }
-      }],
+        token: {
+            type: String,
+            required: true
+        }
+    }],
 }, {
     collection: "account"
 });
@@ -67,11 +67,11 @@ accountSchema.methods.findTokenByAccess = function (access) {
     var tokens = account.tokens;
     var token;
 
-    tokens.forEach(function(element) {
+    tokens.forEach(function (element) {
         if (element.access === access) {
             token = element;
         }
-      });
+    });
     return token;
 };
 
@@ -82,8 +82,7 @@ accountSchema.statics.findById = function (id) {
     }).then((foundAccount) => {
         if (!foundAccount) {
             return Promise.reject();
-        }
-        else {
+        } else {
             return foundAccount;
         }
     });
@@ -113,7 +112,7 @@ accountSchema.statics.findByCredentials = function (userName, password) {
     }).then((foundAccount) => {
         if (!foundAccount) {
             console.log('no user so reject');
-            return Promise.reject();
+            return Promise.reject("User does not exist");
         }
 
         return new Promise((resolve, reject) => {
@@ -122,7 +121,7 @@ accountSchema.statics.findByCredentials = function (userName, password) {
                     resolve(foundAccount);
                 } else {
                     console.log('reject');
-                    reject('no match');
+                    reject('Check password and try again');
                 }
             });
 
@@ -150,4 +149,6 @@ accountSchema.pre('save', function (next) {
 
 var Account = mongoose.model("Account", accountSchema);
 
-module.exports = {Account};
+module.exports = {
+    Account
+};
