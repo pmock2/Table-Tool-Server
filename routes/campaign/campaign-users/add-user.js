@@ -1,13 +1,15 @@
 module.exports = (req, res) => {
     const {
         Campaign
-    } = require("../../models/campaign");
+    } = require("../../../models/campaign");
 
-    var myCookie = req.headers.cookie;
-    var regex = /=(.*)/;
-    var match = regex.exec(myCookie);
+    var myCookie = req.headers.cookie,
+        campaignId = req.params.id,
+        regex = /=(.*)/,
+        match = regex.exec(myCookie);
+
     if (match !== null) {
-        Campaign.getCampaignById(req.body.campaignId).then((campaign) => {
+        Campaign.getCampaignById(campaignId).then((campaign) => {
             campaign.addUser(req.body.userId);
             res.status(200).send('User added');
         }).catch((err) => {
