@@ -5,8 +5,6 @@ module.exports = (req, res) => {
         Campaign
     } = require("../../models/campaign");
 
-    console.log("get ");
-
     var myCookie = req.headers.cookie;
     var regex = /=(.*)/;
     var match = regex.exec(myCookie);
@@ -14,6 +12,7 @@ module.exports = (req, res) => {
         var token = match[1];
         Account.findByToken(token).then((user) => {
             Campaign.getCampaignsByUserName(user.userName).then((campaigns) => {
+
                 res.status(200).send(campaigns);
             }).catch((err) => {
                 res.status(400).send(`${err}`);

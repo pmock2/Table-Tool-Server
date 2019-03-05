@@ -12,14 +12,15 @@ module.exports = (req, res) => {
         var token = match[1];
         Account.findByToken(token).then((user) => {
             var campaignObject = {
-                name: req.body.name,
-                owner: user.id,
+                name: req.body.userName,
+                owner: user.userName,
                 users: [user.userName],
-                DM: user._id,
-                players: []
+                DM: user.userName,
+                players: [],
+                description : req.body.name || ''
             };
             new Campaign(campaignObject).save();
-            console.log('created group');
+            console.log('created campaign');
             res.status(200).send('Campaign Created!');
         }).catch((err) => {
             res.status(401).send(`${err}`);

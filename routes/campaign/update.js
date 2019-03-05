@@ -11,6 +11,7 @@ module.exports = (req, res) => {
             var name = req.body.name; //campaign name
             var dm = req.body.dm; // dm name
             var owner = req.body.owner; // owner name
+            var description = req.body.description;
             if (!(isEmpty(name))) {
                 campaign.updateSchemaString('name', name);
             }
@@ -19,6 +20,9 @@ module.exports = (req, res) => {
             }
             if (!(isEmpty(owner))) {
                 campaign.updateSchemaString('owner', owner);
+            }
+            if (!(isEmpty(description))) {
+                campaign.updateSchemaString('description', description);
             }
             res.status(200).send(campaign);
         }).catch((err) => {

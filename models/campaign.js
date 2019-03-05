@@ -6,7 +6,8 @@ var campaignScheme = new Schema({
     owner: String, //owner's ID
     characters: Array,
     DM: String,
-    users: Array
+    users: Array,
+    description : String
 }, {
     collection: "campaign"
 });
@@ -34,7 +35,6 @@ campaignScheme.statics.getCampaignsByOwnerId = function (userId) {
     return campaign.find({
         owner: userId
     }).then((foundCampaigns) => {
-        console.log(`Found : ${foundCampaigns}`);
         if (!foundCampaigns) {
             return Promise.reject();
         }
@@ -51,7 +51,6 @@ campaignScheme.statics.getCampaignsByUserName = function (username) {
     return campaign.find({
         users: username
     }).then((foundCampaigns) => {
-        console.log(`Found : ${foundCampaigns}`);
         if (!foundCampaigns) {
             return Promise.reject();
         }
@@ -67,7 +66,6 @@ campaignScheme.statics.getCampaignById = function (id) {
     return campaign.find({
         _id: id
     }).then((foundCampaign) => {
-        console.log(`Found : ${foundCampaign}`);
         if (!foundCampaign) {
             return Promise.reject();
         }

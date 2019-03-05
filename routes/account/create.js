@@ -8,7 +8,8 @@ module.exports = (req, res) => {
         newAccount = new account({
             userName: req.body.userName.toLowerCase(),
             password: req.body.password,
-            email: req.body.email
+            email: req.body.email,
+            friends: []
         });
 
     //make sure all required fields are present

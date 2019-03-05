@@ -3,7 +3,6 @@ const account = require('./account');
 const session = require('./session');
 const campaign = require('./campaign');
 
-
 routes.use('/account', account);
 routes.use('/session', session);
 routes.use('/campaign', campaign);

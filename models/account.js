@@ -2,7 +2,6 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-var autoIncrement = require('mongoose-auto-increment');
 
 var accountSchema = new Schema({
     userName: String,
@@ -18,6 +17,8 @@ var accountSchema = new Schema({
             required: true
         }
     }],
+    friends : Array,
+    pendingFriends: Array,
 }, {
     collection: "account"
 });
@@ -75,6 +76,12 @@ accountSchema.methods.findTokenByAccess = function (access) {
     return token;
 };
 
+accountSchema.methods.updateSchemaString = function (key, value) {
+    var account = this;
+    account[key] = value;
+    return account.save();
+};
+
 accountSchema.statics.findById = function (id) {
     var account = this;
     return account.findOne({
@@ -126,6 +133,15 @@ accountSchema.statics.findByCredentials = function (userName, password) {
             });
 
         });
+    });
+};
+
+
+accountSchema.statics.findUsers = function () {
+    var account = this;
+    return account.find().then((accounts) => {
+        console.log(accounts);
+        return accounts;
     });
 };
 
